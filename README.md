@@ -1,6 +1,6 @@
 # OgameEasyRaids
 
-![apercu](https://github.com/Robouste/ogame-easy-raids/blob/master/src/assets/overview.png "Apercu")
+![apercu](https://github.com/Robouste/ogame-easy-raids/blob/master/src/assets/overview-3.png "Apercu")
 
 Système de gestion de raids (utile pour les raids contre les inactifs)
 
