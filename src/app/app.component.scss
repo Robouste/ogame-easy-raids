@@ -27,6 +27,7 @@
 	overflow: hidden;
 	mat-card {
 		margin-bottom: 8px;
+		padding: 0;
 		mat-form-field {
 			width: 100%;
 		}
@@ -39,10 +40,10 @@
 				justify-content: flex-start;
 
 				mat-form-field {
-					width: 200px;
+					width: 175px;
 				}
 				mat-checkbox {
-					margin-left: 8px;
+					margin-left: 24px;
 				}
 			}
 		}
@@ -110,4 +111,10 @@
 	position: absolute;
 	bottom: 24px;
 	right: 24px;
+}
+
+.table-card {
+	.toolbar {
+		padding: 8px;
+	}
 }

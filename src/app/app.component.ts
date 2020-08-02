@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, AfterViewInit } from "@angular/core";
+import { Component, ViewChild, AfterViewInit } from "@angular/core";
 import { trigger, state, style, transition, animate } from "@angular/animations";
 import { MatTableDataSource } from "@angular/material/table";
 import { MatSort, MatSortable } from "@angular/material/sort";
@@ -91,7 +91,7 @@ export class AppComponent implements AfterViewInit {
 		const duplicatesCoord = coords.filter((coord: string, index: number) => coords.indexOf(coord) !== index);
 
 		if (duplicatesCoord.length) {
-			this.snackbar.open(`found duplicate(s) ${duplicatesCoord.join(",")}`, "Ok");
+			this.snackbar.open(`Doublon(s): ${duplicatesCoord.join(", ")}`, "Ok");
 			const duplicates: SpyReport[] = [];
 
 			this.spyReports = this.spyReports.filter((rep: SpyReport) => {

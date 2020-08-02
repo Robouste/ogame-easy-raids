@@ -33,7 +33,7 @@
 			[matRippleUnbounded]="false"
 			(click)="state = state === 'closed' ? 'opened' : 'closed'"
 		>
-			<h4>Rapports</h4>
+			<h4>Information</h4>
 			<button mat-icon-button>
 				<mat-icon [class.icon-closed]="state === 'closed'">
 					expand_less
@@ -42,13 +42,9 @@
 		</mat-card-header>
 		<div class="animated-content" [@slide]="state">
 			<mat-card-content>
-				<mat-form-field appearance="fill" color="accent">
-					<mat-label>Rapports d'espionnage</mat-label>
-					<textarea [(ngModel)]="rawData" matInput rows="15" (keydown.enter)="process(); (false)"></textarea>
-				</mat-form-field>
 				<div class="extra-info">
-					<mat-form-field>
-						<mat-label>Niveau technologie hyper espace</mat-label>
+					<mat-form-field appearance="fill" color="accent">
+						<mat-label>Technologie Hyperespace</mat-label>
 						<input
 							matInput
 							type="number"
@@ -60,6 +56,10 @@
 						Classe "Le Collecteur"
 					</mat-checkbox>
 				</div>
+				<mat-form-field appearance="fill" color="accent">
+					<mat-label>Rapports d'espionnage</mat-label>
+					<textarea [(ngModel)]="rawData" matInput rows="15" (keydown.enter)="process(); (false)"></textarea>
+				</mat-form-field>
 				<div>Capacité grand transporteur: {{ getCargoCapacity().toLocaleString("fr-BE") }}</div>
 			</mat-card-content>
 		</div>
@@ -76,11 +76,13 @@
 		</button>
 	</mat-card>
 
-	<mat-card>
-		<button color="accent" mat-stroked-button (click)="resetFilter()">Retirer les filtres</button>
-		<button color="accent" mat-stroked-button (click)="clearFleet()">Masquer rapport avec flottes</button>
-		<button color="accent" mat-stroked-button (click)="clearDefense()">Masquer rapport avec défenses</button>
-		<button color="accent" mat-stroked-button (click)="clearBoth()">Masquer les deux</button>
+	<mat-card class="table-card">
+		<div class="toolbar">
+			<button color="accent" mat-stroked-button (click)="resetFilter()">Retirer les filtres</button>
+			<button color="accent" mat-stroked-button (click)="clearFleet()">Masquer rapport avec flottes</button>
+			<button color="accent" mat-stroked-button (click)="clearDefense()">Masquer rapport avec défenses</button>
+			<button color="accent" mat-stroked-button (click)="clearBoth()">Masquer les deux</button>
+		</div>
 		<table mat-table [dataSource]="dataSource" matSort>
 			<!--- Note that these columns can be defined in any order.
 					  The actual rendered columns are set as a property on the row definition" -->

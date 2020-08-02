@@ -47,3 +47,13 @@ $candy-app-theme: mat-dark-theme(
 .mat-card-header-text {
 	display: none;
 }
+
+mat-card.mat-card {
+	background-color: rgb(49, 54, 63) !important;
+}
+body {
+	background-color: rgb(36, 41, 46) !important;
+}
+table.mat-table {
+	background: transparent !important;
+}
