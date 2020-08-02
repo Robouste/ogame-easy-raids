@@ -6,6 +6,7 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 
 export const TECH_LVL_STORAGE_KEY: string = "techLvl";
 export const IS_COLLECTOR_STORAGE_KEY: string = "isCollector";
+export const UNIVERS_URL_STORAGE_KEY: string = "universUrl";
 @Component({
 	selector: "app-root",
 	templateUrl: "./app.component.html",
@@ -26,6 +27,8 @@ export class AppComponent implements AfterViewInit {
 	public dataSource: MatTableDataSource<SpyReport> = new MatTableDataSource(this.spyReports);
 	public cargoCapacity: number = 41250;
 	public lastElementClicked: SpyReport;
+	public universUrl: string;
+	public urlRegex: RegExp = /https:\/\/(www.)?[-a-zA-Z0-9@:%._+~#=]{1,256}.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)/;
 
 	private _techLvl: number;
 	public get techLvl(): number {
@@ -46,12 +49,10 @@ export class AppComponent implements AfterViewInit {
 	@ViewChild(MatSort, { static: false }) sort: MatSort;
 
 	constructor(private snackbar: MatSnackBar) {
-		this.techLvl = parseInt(localStorage.getItem(TECH_LVL_STORAGE_KEY)) ?? 0;
-		this.isCollector = !!parseInt(localStorage.getItem(IS_COLLECTOR_STORAGE_KEY));
-		console.log(parseInt(localStorage.getItem(IS_COLLECTOR_STORAGE_KEY)));
+		this.techLvl = parseInt(localStorage.getItem(TECH_LVL_STORAGE_KEY), 10) ?? 0;
+		this.isCollector = !!parseInt(localStorage.getItem(IS_COLLECTOR_STORAGE_KEY), 10);
+		this.universUrl = localStorage.getItem(UNIVERS_URL_STORAGE_KEY);
 	}
-
-	ngOnInit(): void {}
 
 	ngAfterViewInit(): void {
 		this.dataSource.sort = this.sort;
@@ -62,8 +63,11 @@ export class AppComponent implements AfterViewInit {
 	}
 
 	setIsCollectorStorage(value: boolean): void {
-		console.log(value);
 		localStorage.setItem(IS_COLLECTOR_STORAGE_KEY, value ? "1" : "0");
+	}
+
+	setUniversUrlStorage(value: string): void {
+		localStorage.setItem(UNIVERS_URL_STORAGE_KEY, value);
 	}
 
 	process(): void {
@@ -148,7 +152,13 @@ export class AppComponent implements AfterViewInit {
 	}
 
 	getLink(coordinate: Coordinate, cargo: number): string {
-		return `https://s172-fr.ogame.gameforge.com/game/index.php?page=ingame&component=fleetdispatch&galaxy=${coordinate.galaxy}&system=${coordinate.system}&position=${coordinate.position}&type=1&mission=1&cargo=${cargo}`;
+		return `${this.universUrl}/game/index.php?page=ingame&component=fleetdispatch&galaxy=${coordinate.galaxy}&system=${coordinate.system}&position=${coordinate.position}&type=1&mission=1&cargo=${cargo}`;
+	}
+
+	urlIsValid(): boolean {
+		const regex = new RegExp(this.urlRegex);
+
+		return !!this.universUrl?.match(regex);
 	}
 
 	getCargoCapacity(): number {

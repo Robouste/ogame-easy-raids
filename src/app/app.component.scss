@@ -1,65 +1,93 @@
-mat-card {
-	margin-bottom: 8px;
-	mat-form-field {
-		width: 100%;
-	}
-
-	mat-card-content {
-		padding: 8px;
-		.extra-info {
-			display: flex;
-			align-items: center;
-			justify-content: flex-start;
-
-			mat-form-field {
-				width: 200px;
-			}
-			mat-checkbox {
-				margin-left: 8px;
-			}
-		}
-	}
-
-	mat-card-header.text-card {
+.univers-url {
+	form > div,
+	.url-help {
 		display: flex;
-		justify-content: flex-end;
-		cursor: pointer;
-
+		align-items: center;
+	}
+	.url-help {
+		padding-bottom: 0.75em;
+		margin-left: 8px;
 		mat-icon {
-			transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-
-			&.icon-closed {
-				transform: rotate(180deg);
+			margin-right: 8px;
+		}
+		img {
+			display: none;
+		}
+		&:hover {
+			img {
+				display: inline-block;
 			}
 		}
 	}
-
-	mat-card-actions {
-		display: flex;
-		justify-content: flex-end;
-	}
-
-	table {
-		width: 100%;
-	}
-
-	.animated-content {
-		overflow: hidden;
+	mat-form-field {
+		width: 300px;
 	}
 }
+.has-univers-url {
+	overflow: hidden;
+	mat-card {
+		margin-bottom: 8px;
+		mat-form-field {
+			width: 100%;
+		}
 
-.coords {
-	cursor: pointer;
-	&:visited,
-	&:link {
-		color: white;
-	}
-	&:hover {
-		text-decoration: underline;
-		color: #34aeeb;
-	}
-}
+		mat-card-content {
+			padding: 8px;
+			.extra-info {
+				display: flex;
+				align-items: center;
+				justify-content: flex-start;
 
-.focused {
-	background: rgba(0, 0, 0, 0.5);
+				mat-form-field {
+					width: 200px;
+				}
+				mat-checkbox {
+					margin-left: 8px;
+				}
+			}
+		}
+
+		mat-card-header.text-card {
+			display: flex;
+			justify-content: flex-end;
+			cursor: pointer;
+
+			mat-icon {
+				transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+				&.icon-closed {
+					transform: rotate(180deg);
+				}
+			}
+		}
+
+		mat-card-actions {
+			display: flex;
+			justify-content: flex-end;
+		}
+
+		table {
+			width: 100%;
+		}
+
+		.animated-content {
+			overflow: hidden;
+		}
+	}
+
+	.coords {
+		cursor: pointer;
+		&:visited,
+		&:link {
+			color: white;
+		}
+		&:hover {
+			text-decoration: underline;
+			color: #34aeeb;
+		}
+	}
+
+	.focused {
+		background: rgba(0, 0, 0, 0.5);
+	}
 }
