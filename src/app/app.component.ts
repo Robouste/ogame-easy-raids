@@ -15,7 +15,7 @@ export const UNIVERS_URL_STORAGE_KEY: string = "universUrl";
 		trigger("slide", [
 			state("closed", style({ height: "0px", minHeight: "0" })),
 			state("opened", style({ height: "*" })),
-			transition("opened <=> closed", animate("225ms cubic-bezier(0.4, 0.0, 0.2, 1)")),
+			transition("opened <=> closed", animate("375ms cubic-bezier(0.4, 0.0, 0.2, 1)")),
 		]),
 	],
 })
@@ -82,7 +82,7 @@ export class AppComponent implements AfterViewInit {
 		const duplicatesCoord = coords.filter((coord: string, index: number) => coords.indexOf(coord) !== index);
 
 		if (duplicatesCoord.length) {
-			this.snackbar.open(`found duplicate(s) ${duplicatesCoord.join(",")}`);
+			this.snackbar.open(`found duplicate(s) ${duplicatesCoord.join(",")}`, "Ok");
 			const duplicates: SpyReport[] = [];
 
 			this.spyReports = this.spyReports.filter((rep: SpyReport) => {
