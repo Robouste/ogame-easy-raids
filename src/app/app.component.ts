@@ -4,6 +4,8 @@ import { MatTableDataSource } from "@angular/material/table";
 import { MatSort, MatSortable } from "@angular/material/sort";
 import { MatSnackBar } from "@angular/material/snack-bar";
 
+export const TECH_LVL_STORAGE_KEY: string = "techLvl";
+export const IS_COLLECTOR_STORAGE_KEY: string = "isCollector";
 @Component({
 	selector: "app-root",
 	templateUrl: "./app.component.html",
@@ -25,19 +27,46 @@ export class AppComponent implements AfterViewInit {
 	public cargoCapacity: number = 41250;
 	public lastElementClicked: SpyReport;
 
+	private _techLvl: number;
+	public get techLvl(): number {
+		return this._techLvl;
+	}
+	public set techLvl(value: number) {
+		this._techLvl = value;
+	}
+
+	private _isCollector: boolean;
+	public get isCollector(): boolean {
+		return this._isCollector;
+	}
+	public set isCollector(value: boolean) {
+		this._isCollector = value;
+	}
+
 	@ViewChild(MatSort, { static: false }) sort: MatSort;
 
-	constructor(private snackbar: MatSnackBar) {}
+	constructor(private snackbar: MatSnackBar) {
+		this.techLvl = parseInt(localStorage.getItem(TECH_LVL_STORAGE_KEY)) ?? 0;
+		this.isCollector = !!parseInt(localStorage.getItem(IS_COLLECTOR_STORAGE_KEY));
+		console.log(parseInt(localStorage.getItem(IS_COLLECTOR_STORAGE_KEY)));
+	}
+
+	ngOnInit(): void {}
 
 	ngAfterViewInit(): void {
 		this.dataSource.sort = this.sort;
 	}
 
-	process(clean: boolean): void {
-		if (clean) {
-			this.spyReports = [];
-		}
+	setTechStorage(value: number): void {
+		localStorage.setItem(TECH_LVL_STORAGE_KEY, value.toString());
+	}
 
+	setIsCollectorStorage(value: boolean): void {
+		console.log(value);
+		localStorage.setItem(IS_COLLECTOR_STORAGE_KEY, value ? "1" : "0");
+	}
+
+	process(): void {
 		const splitRegex = new RegExp("Rapport d`((?:.|\n)*)Plus", "gm");
 		const reports = this.rawData.match(splitRegex)[0].split("Plus de détails");
 
@@ -85,7 +114,7 @@ export class AppComponent implements AfterViewInit {
 		const fleetRegex: RegExp = new RegExp("Flottes: (.*)D");
 		const defenseRegex: RegExp = new RegExp("Défense: (.*)");
 
-		result.setRessources(resourceRegEx.exec(report)[1], this.cargoCapacity);
+		result.setRessources(resourceRegEx.exec(report)[1], this.getCargoCapacity());
 		result.setCoordinates(coordRegex.exec(report)[2]);
 		const fleets = fleetRegex.exec(report);
 		result.flottes = fleets ? fleetRegex.exec(report)[1] : "??";
@@ -120,6 +149,14 @@ export class AppComponent implements AfterViewInit {
 
 	getLink(coordinate: Coordinate, cargo: number): string {
 		return `https://s172-fr.ogame.gameforge.com/game/index.php?page=ingame&component=fleetdispatch&galaxy=${coordinate.galaxy}&system=${coordinate.system}&position=${coordinate.position}&type=1&mission=1&cargo=${cargo}`;
+	}
+
+	getCargoCapacity(): number {
+		const baseCapacity = 25000;
+		const techBonus = baseCapacity * this.techLvl * 0.05;
+		const collectorBonus = this.isCollector ? baseCapacity * 0.25 : 0;
+
+		return baseCapacity + techBonus + collectorBonus;
 	}
 }
 

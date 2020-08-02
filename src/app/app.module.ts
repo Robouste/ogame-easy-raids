@@ -13,6 +13,7 @@ import { MatRippleModule } from "@angular/material/core";
 import { MatPaginatorModule } from "@angular/material/paginator";
 import { MatSortModule } from "@angular/material/sort";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
+import { MatCheckboxModule } from "@angular/material/checkbox";
 
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
@@ -34,6 +35,7 @@ import { FormsModule } from "@angular/forms";
 		MatPaginatorModule,
 		MatSortModule,
 		MatSnackBarModule,
+		MatCheckboxModule,
 	],
 	providers: [],
 	bootstrap: [AppComponent],

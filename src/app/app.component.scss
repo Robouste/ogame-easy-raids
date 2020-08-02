@@ -4,6 +4,22 @@ mat-card {
 		width: 100%;
 	}
 
+	mat-card-content {
+		padding: 8px;
+		.extra-info {
+			display: flex;
+			align-items: center;
+			justify-content: flex-start;
+
+			mat-form-field {
+				width: 200px;
+			}
+			mat-checkbox {
+				margin-left: 8px;
+			}
+		}
+	}
+
 	mat-card-header.text-card {
 		display: flex;
 		justify-content: flex-end;
