@@ -109,23 +109,36 @@ export class AppComponent implements AfterViewInit {
 		}
 
 		this.state = "closed";
+		this.rawData = "";
 	}
 
 	parseReport(report: string): void {
 		const result = new SpyReport();
 		const resourceRegEx: RegExp = new RegExp("Ressources: (.*)");
 		const coordRegex: RegExp = new RegExp(/(\[(.*)\])/);
-		const fleetRegex: RegExp = new RegExp("Flottes: (.*)D");
 		const defenseRegex: RegExp = new RegExp("Défense: (.*)");
 
-		result.setRessources(resourceRegEx.exec(report)[1], this.getCargoCapacity());
+		result.resources = this.stringToNumber(resourceRegEx.exec(report)[1]);
 		result.setCoordinates(coordRegex.exec(report)[2]);
-		const fleets = fleetRegex.exec(report);
-		result.flottes = fleets ? fleetRegex.exec(report)[1] : "??";
+		result.noCargo = Math.ceil(result.resources / 2 / this.getCargoCapacity());
+
 		const defense = defenseRegex.exec(report);
-		result.defenses = defense ? defenseRegex.exec(report)[1] : "??";
+		result.defenses = defense ? this.stringToNumber(defense[1]) : null;
+
+		const fleetRegex: RegExp = new RegExp(defense ? "Flottes: (.*)D" : "Flottes: (.*)");
+		const fleets = fleetRegex.exec(report);
+		result.flottes = fleets ? this.stringToNumber(fleets[1]) : null;
 
 		this.spyReports.push(result);
+	}
+
+	stringToNumber(input: string): number {
+		input = input.replace(",", "").replace(".", "");
+		if (input.includes("M")) {
+			input = input.slice(0, -1);
+			input += "000";
+		}
+		return parseFloat(input);
 	}
 
 	resetFilter(): void {
@@ -133,17 +146,17 @@ export class AppComponent implements AfterViewInit {
 	}
 
 	clearDefense(): void {
-		this.dataSource.data = this.spyReports.slice().filter((rep: SpyReport) => rep.defenses === "0");
+		this.dataSource.data = this.spyReports.slice().filter((rep: SpyReport) => rep.defenses > 0);
 	}
 
 	clearFleet(): void {
-		this.dataSource.data = this.spyReports.slice().filter((rep: SpyReport) => rep.flottes === "0");
+		this.dataSource.data = this.spyReports.slice().filter((rep: SpyReport) => rep.flottes > 0);
 	}
 
 	clearBoth(): void {
 		this.dataSource.data = this.spyReports
 			.slice()
-			.filter((rep: SpyReport) => rep.flottes === "0" && rep.defenses === "0");
+			.filter((rep: SpyReport) => rep.flottes === 0 && rep.defenses === 0);
 	}
 
 	navigate(report: SpyReport): void {
@@ -172,24 +185,10 @@ export class AppComponent implements AfterViewInit {
 
 export class SpyReport {
 	public resources: number;
-	public flottes: string;
-	public defenses: string;
+	public flottes?: number;
+	public defenses?: number;
 	public noCargo: number;
 	public coordinates: Coordinate;
-
-	setRessources(rawResource: string, capacity: number): void {
-		rawResource = rawResource.replace(",", "");
-		rawResource = rawResource.replace(".", "");
-
-		if (rawResource.includes("M")) {
-			rawResource = rawResource.slice(0, -1);
-			this.resources = parseFloat(rawResource) * 1000;
-		} else {
-			this.resources = parseFloat(rawResource);
-		}
-
-		this.noCargo = Math.ceil(this.resources / 2 / capacity);
-	}
 
 	setCoordinates(coord: string): void {
 		const group = coord.split(":");

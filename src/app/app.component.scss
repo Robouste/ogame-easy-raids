@@ -48,9 +48,14 @@
 		}
 
 		mat-card-header.text-card {
-			display: flex;
-			justify-content: flex-end;
 			cursor: pointer;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+
+			h4 {
+				margin: 0 0 0 24px;
+			}
 
 			mat-icon {
 				transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -74,6 +79,15 @@
 			overflow: hidden;
 		}
 	}
+	.unknown {
+		color: #f4fc03;
+	}
+	.warn {
+		color: #fcba03;
+	}
+	.danger {
+		color: #fc0303;
+	}
 
 	.coords {
 		cursor: pointer;
@@ -90,4 +104,10 @@
 	.focused {
 		background: rgba(0, 0, 0, 0.5);
 	}
+}
+
+.add-button {
+	position: absolute;
+	bottom: 24px;
+	right: 24px;
 }
