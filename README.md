@@ -23,6 +23,10 @@ Permet de centraliser tous les rapports d'espionnage dans un tableau.
 -   Naviguer à l'endroit où vous souhaitez installer (Ex: C:\)
 -   Ouvrir une invite de commande (shift + click droit -> Ouvrir Powershell)
 
+`git clone https://github.com/Robouste/ogame-easy-raids.git`
+
+`cd ogame-easy-raids`
+
 `npm install -g @angular/cli`
 
 `npm install`
