@@ -30,6 +30,7 @@ export class AppComponent implements AfterViewInit {
 		"defenses",
 		"noCargo",
 		"coordinates",
+		"activity",
 		"actions",
 	];
 	public dataSource: MatTableDataSource<SpyReport> = new MatTableDataSource(this.spyReports);
@@ -125,6 +126,7 @@ export class AppComponent implements AfterViewInit {
 		const resourceRegEx: RegExp = new RegExp("Ressources: (.*)");
 		const coordRegex: RegExp = new RegExp(/(\[(.*)\])/);
 		const defenseRegex: RegExp = new RegExp("Défense: (.*)");
+		const activityRegex: RegExp = new RegExp(/Activité(.*\D)(\d+) minutes/);
 
 		result.resources = this.stringToNumber(resourceRegEx.exec(report)[1]);
 		result.setCoordinates(coordRegex.exec(report)[2]);
@@ -137,11 +139,13 @@ export class AppComponent implements AfterViewInit {
 		const fleets = fleetRegex.exec(report);
 		result.flottes = fleets ? this.stringToNumber(fleets[1]) : null;
 
+		result.activity = parseInt(activityRegex.exec(report)[2], 10);
+
 		this.spyReports.push(result);
 	}
 
 	stringToNumber(input: string): number {
-		input = input.replace(/,/g, "."); // .replace(/\./g, "");
+		input = input.replace(/,/g, ".");
 		let multiplicator: number = 1000;
 		if (input.includes("M")) {
 			input = input.slice(0, -1);
@@ -208,6 +212,7 @@ export class SpyReport {
 	public defenses?: number;
 	public noCargo: number;
 	public coordinates: Coordinate;
+	public activity: number;
 
 	setCoordinates(coord: string): void {
 		const group = coord.split(":");
