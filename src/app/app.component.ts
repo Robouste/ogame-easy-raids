@@ -23,7 +23,15 @@ export class AppComponent implements AfterViewInit {
 	public state: string = "opened";
 	public rawData: string;
 	public spyReports: SpyReport[] = [];
-	public displayedColumns: string[] = ["index", "resources", "flottes", "defenses", "noCargo", "coordinates"];
+	public displayedColumns: string[] = [
+		"index",
+		"resources",
+		"flottes",
+		"defenses",
+		"noCargo",
+		"coordinates",
+		"actions",
+	];
 	public dataSource: MatTableDataSource<SpyReport> = new MatTableDataSource(this.spyReports);
 	public cargoCapacity: number = 41250;
 	public lastElementClicked: SpyReport;
@@ -133,12 +141,14 @@ export class AppComponent implements AfterViewInit {
 	}
 
 	stringToNumber(input: string): number {
-		input = input.replace(",", "").replace(".", "");
+		input = input.replace(/,/g, "."); // .replace(/\./g, "");
+		let multiplicator: number = 1000;
 		if (input.includes("M")) {
 			input = input.slice(0, -1);
-			input += "000";
+			multiplicator = 1000000;
 		}
-		return parseFloat(input);
+
+		return parseFloat(input) * multiplicator;
 	}
 
 	resetFilter(): void {
@@ -161,11 +171,20 @@ export class AppComponent implements AfterViewInit {
 
 	navigate(report: SpyReport): void {
 		this.lastElementClicked = report;
-		window.open(this.getLink(report.coordinates, report.noCargo), "_blank");
+		window.open(this.getLink(report.coordinates, report.noCargo, "fleetdispatch"), "_blank");
 	}
 
-	getLink(coordinate: Coordinate, cargo: number): string {
-		return `${this.universUrl}/game/index.php?page=ingame&component=fleetdispatch&galaxy=${coordinate.galaxy}&system=${coordinate.system}&position=${coordinate.position}&type=1&mission=1&cargo=${cargo}`;
+	getLink(coordinate: Coordinate, cargo: number, component: string): string {
+		return `${this.universUrl}/game/index.php?page=ingame&component=${component}&galaxy=${coordinate.galaxy}&system=${coordinate.system}&position=${coordinate.position}&type=1&mission=1&cargo=${cargo}`;
+	}
+
+	remove(report: SpyReport): void {
+		this.spyReports = this.spyReports.filter((rep: SpyReport) => rep !== report);
+		this.dataSource.data = this.spyReports;
+	}
+
+	browse(report: SpyReport): void {
+		window.open(this.getLink(report.coordinates, report.noCargo, "galaxy"), "_blank");
 	}
 
 	urlIsValid(): boolean {
