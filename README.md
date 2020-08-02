@@ -1,5 +1,7 @@
 # OgameEasyRaids
 
+![apercu](https://github.com/Robouste/ogame-easy-raids/blob/master/src/assets/overview.png "Apercu")
+
 Système de gestion de raids (utile pour les raids contre les inactifs)
 
 Permet de centraliser tous les rapports d'espionnage dans un tableau.
