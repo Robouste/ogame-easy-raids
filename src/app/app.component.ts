@@ -1,8 +1,8 @@
-import { Component, ViewChild, AfterViewInit } from "@angular/core";
-import { trigger, state, style, transition, animate } from "@angular/animations";
-import { MatTableDataSource } from "@angular/material/table";
-import { MatSort, MatSortable } from "@angular/material/sort";
+import { animate, state, style, transition, trigger } from "@angular/animations";
+import { AfterViewInit, Component, ViewChild } from "@angular/core";
 import { MatSnackBar } from "@angular/material/snack-bar";
+import { MatSort, MatSortable } from "@angular/material/sort";
+import { MatTableDataSource } from "@angular/material/table";
 
 export const TECH_LVL_STORAGE_KEY: string = "techLvl";
 export const IS_COLLECTOR_STORAGE_KEY: string = "isCollector";
@@ -25,6 +25,7 @@ export class AppComponent implements AfterViewInit {
 	public spyReports: SpyReport[] = [];
 	public displayedColumns: string[] = [
 		"index",
+		"player",
 		"resources",
 		"flottes",
 		"defenses",
@@ -127,6 +128,7 @@ export class AppComponent implements AfterViewInit {
 		const coordRegex: RegExp = new RegExp(/(\[(.*)\])/);
 		const defenseRegex: RegExp = new RegExp("Défense: (.*)");
 		const activityRegex: RegExp = new RegExp(/Activité(.*\D)(\d+) minutes/);
+		const playerRegex: RegExp = new RegExp(/Joueur:  (.*) Activité/);
 
 		result.resources = this.stringToNumber(resourceRegEx.exec(report)[1]);
 		result.setCoordinates(coordRegex.exec(report)[2]);
@@ -140,6 +142,8 @@ export class AppComponent implements AfterViewInit {
 		result.flottes = fleets ? this.stringToNumber(fleets[1]) : null;
 
 		result.activity = parseInt(activityRegex.exec(report)[2], 10);
+
+		result.player = playerRegex.exec(report)[1];
 
 		this.spyReports.push(result);
 	}
@@ -213,6 +217,7 @@ export class SpyReport {
 	public noCargo: number;
 	public coordinates: Coordinate;
 	public activity: number;
+	public player: string;
 
 	setCoordinates(coord: string): void {
 		const group = coord.split(":");
@@ -225,6 +230,14 @@ export class SpyReport {
 
 	getCoordinates(): string {
 		return this.coordinates.toString();
+	}
+
+	isInactif(): boolean {
+		return this.player?.includes("(i)");
+	}
+
+	isStronglyInactif(): boolean {
+		return this.player?.includes("(I)");
 	}
 }
 
