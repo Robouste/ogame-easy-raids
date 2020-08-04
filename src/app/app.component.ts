@@ -239,6 +239,10 @@ export class SpyReport {
 	isStronglyInactif(): boolean {
 		return this.player?.includes("(I)");
 	}
+
+	isHonorable(): boolean {
+		return this.player?.includes("(ph)");
+	}
 }
 
 export class Coordinate {

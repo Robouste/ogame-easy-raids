@@ -103,7 +103,11 @@
 					Joueur
 				</th>
 				<td mat-cell *matCellDef="let element">
-					<span [class.inactif]="element.isInactif()" [class.strong-inactif]="element.isStronglyInactif()">
+					<span
+						[class.inactif]="element.isInactif()"
+						[class.strong-inactif]="element.isStronglyInactif()"
+						[class.honorable]="element.isHonorable()"
+					>
 						{{ element.player }}
 					</span>
 				</td>

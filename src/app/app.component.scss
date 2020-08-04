@@ -79,15 +79,6 @@
 			overflow: hidden;
 		}
 	}
-	.unknown {
-		color: #f4fc03;
-	}
-	.warn {
-		color: #fcba03;
-	}
-	.danger {
-		color: #fc0303;
-	}
 
 	.coords {
 		cursor: pointer;
@@ -125,4 +116,14 @@
 
 .strong-inactif {
 	color: #757575;
+}
+.unknown,
+.honorable {
+	color: #f4fc03;
+}
+.warn {
+	color: #fcba03;
+}
+.danger {
+	color: #fc0303;
 }
