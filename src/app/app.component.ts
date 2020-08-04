@@ -135,11 +135,11 @@ export class AppComponent implements AfterViewInit {
 		result.noCargo = Math.ceil(result.resources / 2 / this.getCargoCapacity());
 
 		const defense = defenseRegex.exec(report);
-		result.defenses = defense ? this.stringToNumber(defense[1]) : null;
+		result.defenses = new AttackPower(defense ? this.stringToNumber(defense[1]) : null);
 
 		const fleetRegex: RegExp = new RegExp(defense ? "Flottes: (.*)D" : "Flottes: (.*)");
 		const fleets = fleetRegex.exec(report);
-		result.flottes = fleets ? this.stringToNumber(fleets[1]) : null;
+		result.flottes = new AttackPower(fleets ? this.stringToNumber(fleets[1]) : null);
 
 		result.activity = parseInt(activityRegex.exec(report)[2], 10);
 
@@ -164,17 +164,17 @@ export class AppComponent implements AfterViewInit {
 	}
 
 	clearDefense(): void {
-		this.dataSource.data = this.spyReports.slice().filter((rep: SpyReport) => rep.defenses > 0);
+		this.dataSource.data = this.spyReports.slice().filter((rep: SpyReport) => rep.defenses.amount > 0);
 	}
 
 	clearFleet(): void {
-		this.dataSource.data = this.spyReports.slice().filter((rep: SpyReport) => rep.flottes > 0);
+		this.dataSource.data = this.spyReports.slice().filter((rep: SpyReport) => rep.flottes.amount > 0);
 	}
 
 	clearBoth(): void {
 		this.dataSource.data = this.spyReports
 			.slice()
-			.filter((rep: SpyReport) => rep.flottes === 0 && rep.defenses === 0);
+			.filter((rep: SpyReport) => rep.flottes.amount === 0 && rep.defenses.amount === 0);
 	}
 
 	navigate(report: SpyReport): void {
@@ -212,12 +212,14 @@ export class AppComponent implements AfterViewInit {
 
 export class SpyReport {
 	public resources: number;
-	public flottes?: number;
-	public defenses?: number;
+	public flottes: AttackPower;
+	public defenses: AttackPower;
 	public noCargo: number;
 	public coordinates: Coordinate;
 	public activity: number;
 	public player: string;
+
+	constructor() {}
 
 	setCoordinates(coord: string): void {
 		const group = coord.split(":");
@@ -243,6 +245,31 @@ export class SpyReport {
 	isHonorable(): boolean {
 		return this.player?.includes("(ph)");
 	}
+}
+
+export class AttackPower {
+	amount: number;
+
+	constructor(amount: number) {
+		this.amount = amount;
+	}
+
+	warning(): boolean {
+		return this.amount > 0;
+	}
+	danger(): boolean {
+		return this.amount > 1000000;
+	}
+	unknown(): boolean {
+		return this.amount == null;
+	}
+}
+
+export class Resource {
+	public metal: number;
+	public crystal: number;
+	public deuterium: number;
+	public total: number;
 }
 
 export class Coordinate {

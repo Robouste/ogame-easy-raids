@@ -130,11 +130,11 @@
 				</th>
 				<td mat-cell *matCellDef="let element">
 					<span
-						[class.warn]="element.flottes > 0"
-						[class.unknown]="element.flottes === null"
-						[class.danger]="element.flottes > 1000000"
+						[class.warn]="element.flottes.warning()"
+						[class.unknown]="element.flottes.unknown()"
+						[class.danger]="element.flottes.danger()"
 					>
-						{{ (element.flottes | number | pointReplacer) || "??" }}
+						{{ (element.flottes.amount | number | pointReplacer) || "??" }}
 					</span>
 				</td>
 			</ng-container>
@@ -146,11 +146,11 @@
 				</th>
 				<td mat-cell *matCellDef="let element">
 					<span
-						[class.warn]="element.defenses > 0"
-						[class.unknown]="element.defenses === null"
-						[class.danger]="element.defenses > 1000000"
+						[class.warn]="element.defenses.warning()"
+						[class.unknown]="element.defenses.unknown()"
+						[class.danger]="element.defenses.danger()"
 					>
-						{{ (element.defenses | number | pointReplacer) || "??" }}
+						{{ (element.defenses.amount | number | pointReplacer) || "??" }}
 					</span>
 				</td>
 			</ng-container>
