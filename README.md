@@ -20,11 +20,11 @@ Permet de centraliser tous les rapports d'espionnage dans un tableau.
 
 ## Installation
 
-`npm install -g @angular/cli`
+-   Exécuter fichier `install.bat`
 
-`npm install`
+## Lancer l'application
 
-`ng serve -o`
+-   Exécuter fichier `run.bat`
 
 ## Utilisation
 
