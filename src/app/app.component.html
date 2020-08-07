@@ -123,6 +123,36 @@
 				</td>
 			</ng-container>
 
+			<!-- Metal Column -->
+			<ng-container matColumnDef="metal">
+				<th mat-header-cell *matHeaderCellDef mat-sort-header>
+					Métal
+				</th>
+				<td mat-cell *matCellDef="let element">
+					{{ (element.metal | number | pointReplacer) || "??" }}
+				</td>
+			</ng-container>
+
+			<!-- Crystal Column -->
+			<ng-container matColumnDef="crystal">
+				<th mat-header-cell *matHeaderCellDef mat-sort-header>
+					Cristal
+				</th>
+				<td mat-cell *matCellDef="let element">
+					{{ (element.crystal | number | pointReplacer) || "??" }}
+				</td>
+			</ng-container>
+
+			<!-- Deuterium Column -->
+			<ng-container matColumnDef="deuterium">
+				<th mat-header-cell *matHeaderCellDef mat-sort-header>
+					Deutérium
+				</th>
+				<td mat-cell *matCellDef="let element">
+					{{ (element.deuterium | number | pointReplacer) || "??" }}
+				</td>
+			</ng-container>
+
 			<!-- Flottes Column -->
 			<ng-container matColumnDef="flottes">
 				<th mat-header-cell *matHeaderCellDef mat-sort-header>
@@ -158,11 +188,9 @@
 			<!-- Cargo Column -->
 			<ng-container matColumnDef="noCargo">
 				<th mat-header-cell *matHeaderCellDef mat-sort-header>
-					Cargos
+					Cargos (Petit/Grand)
 				</th>
-				<td mat-cell *matCellDef="let element">
-					{{ element.noCargo }}
-				</td>
+				<td mat-cell *matCellDef="let element">{{ element.smallCargo }}/{{ element.noCargo }}</td>
 			</ng-container>
 
 			<!-- Coords Column -->

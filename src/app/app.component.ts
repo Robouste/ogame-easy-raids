@@ -27,6 +27,9 @@ export class AppComponent implements AfterViewInit {
 		"index",
 		"player",
 		"resources",
+		"metal",
+		"crystal",
+		"deuterium",
 		"flottes",
 		"defenses",
 		"noCargo",
@@ -38,7 +41,16 @@ export class AppComponent implements AfterViewInit {
 	public cargoCapacity: number = 41250;
 	public lastElementClicked: SpyReport;
 	public universUrl: string;
+
 	public urlRegex: RegExp = /https:\/\/(www.)?[-a-zA-Z0-9@:%._+~#=]{1,256}.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)/;
+	public resourceRegEx: RegExp = new RegExp("Ressources: (.*)");
+	public coordRegex: RegExp = new RegExp(/(\[(.*)\])/);
+	public defenseRegex: RegExp = new RegExp("Défense: (.*)");
+	public activityRegex: RegExp = new RegExp(/Activité(.*\D)(\d+) minutes/);
+	public playerRegex: RegExp = new RegExp(/Joueur:  (.*) Activité/);
+	public metalRegex: RegExp = new RegExp(/Métal: (.*)C/);
+	public crystalRegex: RegExp = new RegExp(/Cristal: (.*)D/);
+	public deutRegex: RegExp = new RegExp(/Deutérium: (.*)R/);
 
 	private _techLvl: number;
 	public get techLvl(): number {
@@ -124,26 +136,24 @@ export class AppComponent implements AfterViewInit {
 
 	parseReport(report: string): void {
 		const result = new SpyReport();
-		const resourceRegEx: RegExp = new RegExp("Ressources: (.*)");
-		const coordRegex: RegExp = new RegExp(/(\[(.*)\])/);
-		const defenseRegex: RegExp = new RegExp("Défense: (.*)");
-		const activityRegex: RegExp = new RegExp(/Activité(.*\D)(\d+) minutes/);
-		const playerRegex: RegExp = new RegExp(/Joueur:  (.*) Activité/);
 
-		result.resources = this.stringToNumber(resourceRegEx.exec(report)[1]);
-		result.setCoordinates(coordRegex.exec(report)[2]);
+		result.metal = this.stringToNumber(this.metalRegex.exec(report)[1]);
+		result.crystal = this.stringToNumber(this.crystalRegex.exec(report)[1]);
+		result.deuterium = this.stringToNumber(this.deutRegex.exec(report)[1]);
+		result.resources = this.stringToNumber(this.resourceRegEx.exec(report)[1]);
+		result.setCoordinates(this.coordRegex.exec(report)[2]);
 		result.noCargo = Math.ceil(result.resources / 2 / this.getCargoCapacity());
 
-		const defense = defenseRegex.exec(report);
+		const defense = this.defenseRegex.exec(report);
 		result.defenses = new AttackPower(defense ? this.stringToNumber(defense[1]) : null);
 
 		const fleetRegex: RegExp = new RegExp(defense ? "Flottes: (.*)D" : "Flottes: (.*)");
 		const fleets = fleetRegex.exec(report);
 		result.flottes = new AttackPower(fleets ? this.stringToNumber(fleets[1]) : null);
 
-		result.activity = parseInt(activityRegex.exec(report)[2], 10);
+		result.activity = parseInt(this.activityRegex.exec(report)[2], 10);
 
-		result.player = playerRegex.exec(report)[1];
+		result.player = this.playerRegex.exec(report)[1];
 
 		this.spyReports.push(result);
 	}
@@ -212,12 +222,18 @@ export class AppComponent implements AfterViewInit {
 
 export class SpyReport {
 	public resources: number;
+	public metal: number;
+	public crystal: number;
+	public deuterium: number;
 	public flottes: AttackPower;
 	public defenses: AttackPower;
 	public noCargo: number;
 	public coordinates: Coordinate;
 	public activity: number;
 	public player: string;
+	public get smallCargo(): number {
+		return Math.ceil(this.noCargo * 5);
+	}
 
 	constructor() {}
 
@@ -263,13 +279,6 @@ export class AttackPower {
 	unknown(): boolean {
 		return this.amount == null;
 	}
-}
-
-export class Resource {
-	public metal: number;
-	public crystal: number;
-	public deuterium: number;
-	public total: number;
 }
 
 export class Coordinate {
