@@ -124,12 +124,18 @@ export class AppComponent implements AfterViewInit {
 		this.dataSource.data = this.spyReports;
 
 		if (!this.dataSource.sort.active) {
-			const sortable: MatSortable = {
+			const ressourceSort: MatSortable = {
+				id: "resources",
+				start: "desc",
+				disableClear: false,
+			};
+			const cargoSort: MatSortable = {
 				id: "noCargo",
 				start: "desc",
 				disableClear: false,
 			};
-			this.dataSource.sort.sort(sortable);
+			this.dataSource.sort.sort(cargoSort);
+			this.dataSource.sort.sort(ressourceSort);
 		}
 
 		this.state = "closed";
