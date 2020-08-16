@@ -7,6 +7,7 @@ import { MatTableDataSource } from "@angular/material/table";
 export const TECH_LVL_STORAGE_KEY: string = "techLvl";
 export const IS_COLLECTOR_STORAGE_KEY: string = "isCollector";
 export const UNIVERS_URL_STORAGE_KEY: string = "universUrl";
+
 @Component({
 	selector: "app-root",
 	templateUrl: "./app.component.html",
@@ -51,6 +52,7 @@ export class AppComponent implements AfterViewInit {
 	public metalRegex: RegExp = new RegExp(/Métal: (.*)C/);
 	public crystalRegex: RegExp = new RegExp(/Cristal: (.*)D/);
 	public deutRegex: RegExp = new RegExp(/Deutérium: (.*)R/);
+	public butinRegex: RegExp = new RegExp(/Butin: (.*)%P/);
 
 	private _techLvl: number;
 	public get techLvl(): number {
@@ -123,7 +125,7 @@ export class AppComponent implements AfterViewInit {
 
 		if (!this.dataSource.sort.active) {
 			const sortable: MatSortable = {
-				id: "resources",
+				id: "noCargo",
 				start: "desc",
 				disableClear: false,
 			};
@@ -135,14 +137,15 @@ export class AppComponent implements AfterViewInit {
 	}
 
 	parseReport(report: string): void {
-		const result = new SpyReport();
+		const result = new SpyReport(this.getCargoCapacity());
 
 		result.metal = this.stringToNumber(this.metalRegex.exec(report)[1]);
 		result.crystal = this.stringToNumber(this.crystalRegex.exec(report)[1]);
 		result.deuterium = this.stringToNumber(this.deutRegex.exec(report)[1]);
 		result.resources = this.stringToNumber(this.resourceRegEx.exec(report)[1]);
 		result.setCoordinates(this.coordRegex.exec(report)[2]);
-		result.noCargo = Math.ceil(result.resources / 2 / this.getCargoCapacity());
+		console.log("butin regex", this.butinRegex.exec(report));
+		result.butin = parseInt(this.butinRegex.exec(report)[1], 10);
 
 		const defense = this.defenseRegex.exec(report);
 		result.defenses = new AttackPower(defense ? this.stringToNumber(defense[1]) : null);
@@ -189,7 +192,7 @@ export class AppComponent implements AfterViewInit {
 
 	navigate(report: SpyReport): void {
 		this.lastElementClicked = report;
-		window.open(this.getLink(report.coordinates, report.noCargo, "fleetdispatch"), "_blank");
+		window.open(this.getLink(report.coordinates, +report.noCargo + 1, "fleetdispatch"), "_blank");
 	}
 
 	getLink(coordinate: Coordinate, cargo: number, component: string): string {
@@ -227,15 +230,24 @@ export class SpyReport {
 	public deuterium: number;
 	public flottes: AttackPower;
 	public defenses: AttackPower;
-	public noCargo: number;
 	public coordinates: Coordinate;
 	public activity: number;
 	public player: string;
+	public butin: number;
+	public cargoCapacity: number;
+
+	public get noCargo(): number {
+		const butin = this.butin / 100;
+		return Math.ceil((this.resources * butin) / this.cargoCapacity);
+	}
+
 	public get smallCargo(): number {
 		return Math.ceil(this.noCargo * 5);
 	}
 
-	constructor() {}
+	constructor(cargoCapacity: number) {
+		this.cargoCapacity = cargoCapacity;
+	}
 
 	setCoordinates(coord: string): void {
 		const group = coord.split(":");
