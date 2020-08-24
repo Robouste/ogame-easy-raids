@@ -121,22 +121,14 @@ export class AppComponent implements AfterViewInit {
 			});
 		}
 
-		this.dataSource.data = this.spyReports;
+		this.spyReports.sort((a, b) => {
+			if (a.noCargo === b.noCargo) {
+				return a.resources > b.resources ? -1 : 1;
+			}
+			return a.noCargo > b.noCargo ? -1 : 1;
+		});
 
-		if (!this.dataSource.sort.active) {
-			const ressourceSort: MatSortable = {
-				id: "resources",
-				start: "desc",
-				disableClear: false,
-			};
-			const cargoSort: MatSortable = {
-				id: "noCargo",
-				start: "desc",
-				disableClear: false,
-			};
-			this.dataSource.sort.sort(cargoSort);
-			this.dataSource.sort.sort(ressourceSort);
-		}
+		this.dataSource.data = this.spyReports;
 
 		this.state = "closed";
 		this.rawData = "";
