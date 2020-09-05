@@ -1,0 +1,61 @@
+table {
+	width: 100%;
+}
+.table-card {
+	padding: 0;
+	.toolbar {
+		padding: 8px;
+	}
+}
+
+.inactif {
+	color: #a5a3a3;
+}
+
+.strong-inactif {
+	color: #757575;
+}
+.unknown,
+.honorable {
+	color: #f4fc03;
+}
+.warn {
+	color: #fcba03;
+}
+.danger {
+	color: #fc0303;
+}
+
+.coords {
+	cursor: pointer;
+	&:visited,
+	&:link {
+		color: white;
+	}
+	&:hover {
+		text-decoration: underline;
+		color: #34aeeb;
+	}
+}
+
+.focused {
+	background: rgba(0, 0, 0, 0.5);
+}
+
+.del-btn {
+	mat-icon.mat-icon {
+		color: #fc0303;
+	}
+}
+
+.atk-btn {
+	mat-icon.mat-icon {
+		color: #a30f99;
+	}
+}
+
+.browse-btn {
+	mat-icon.mat-icon {
+		color: #3167bd;
+	}
+}

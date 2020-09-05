@@ -1,12 +1,15 @@
 import { animate, state, style, transition, trigger } from "@angular/animations";
-import { AfterViewInit, Component, ViewChild } from "@angular/core";
+import { Component, ViewChild } from "@angular/core";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { MatSort, MatSortable } from "@angular/material/sort";
-import { MatTableDataSource } from "@angular/material/table";
+
+import { GridComponent } from "./grid/grid.component";
+import { AttackPower } from "./models/attack-power.model";
+import { SpyReport } from "./models/spy-report.model";
 
 export const TECH_LVL_STORAGE_KEY: string = "techLvl";
 export const IS_COLLECTOR_STORAGE_KEY: string = "isCollector";
 export const UNIVERS_URL_STORAGE_KEY: string = "universUrl";
+export const LATER_KEY: string = "later";
 
 @Component({
 	selector: "app-root",
@@ -20,27 +23,12 @@ export const UNIVERS_URL_STORAGE_KEY: string = "universUrl";
 		]),
 	],
 })
-export class AppComponent implements AfterViewInit {
+export class AppComponent {
 	public state: string = "opened";
 	public rawData: string;
 	public spyReports: SpyReport[] = [];
-	public displayedColumns: string[] = [
-		"index",
-		"player",
-		"resources",
-		"metal",
-		"crystal",
-		"deuterium",
-		"flottes",
-		"defenses",
-		"noCargo",
-		"coordinates",
-		"activity",
-		"actions",
-	];
-	public dataSource: MatTableDataSource<SpyReport> = new MatTableDataSource(this.spyReports);
+	public savedForLater: SpyReport[];
 	public cargoCapacity: number = 41250;
-	public lastElementClicked: SpyReport;
 	public universUrl: string;
 
 	public urlRegex: RegExp = /https:\/\/(www.)?[-a-zA-Z0-9@:%._+~#=]{1,256}.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)/;
@@ -70,16 +58,17 @@ export class AppComponent implements AfterViewInit {
 		this._isCollector = value;
 	}
 
-	@ViewChild(MatSort, { static: false }) sort: MatSort;
+	@ViewChild("reportsGrid") reportsGrid: GridComponent;
+	@ViewChild("savedGrid") savedGrid: GridComponent;
 
 	constructor(private snackbar: MatSnackBar) {
 		this.techLvl = parseInt(localStorage.getItem(TECH_LVL_STORAGE_KEY), 10) ?? 0;
 		this.isCollector = !!parseInt(localStorage.getItem(IS_COLLECTOR_STORAGE_KEY), 10);
 		this.universUrl = localStorage.getItem(UNIVERS_URL_STORAGE_KEY);
-	}
-
-	ngAfterViewInit(): void {
-		this.dataSource.sort = this.sort;
+		const fucknames = (JSON.parse(localStorage.getItem(LATER_KEY)) as SpyReport[]) ?? [];
+		this.savedForLater = fucknames.map((report: SpyReport) =>
+			new SpyReport(this.getCargoCapacity()).fromJson(report)
+		);
 	}
 
 	setTechStorage(value: number): void {
@@ -128,7 +117,7 @@ export class AppComponent implements AfterViewInit {
 			return a.noCargo > b.noCargo ? -1 : 1;
 		});
 
-		this.dataSource.data = this.spyReports;
+		this.reportsGrid.dataSource.data = this.spyReports;
 
 		this.state = "closed";
 		this.rawData = "";
@@ -142,7 +131,6 @@ export class AppComponent implements AfterViewInit {
 		result.deuterium = this.stringToNumber(this.deutRegex.exec(report)[1]);
 		result.resources = this.stringToNumber(this.resourceRegEx.exec(report)[1]);
 		result.setCoordinates(this.coordRegex.exec(report)[2]);
-		console.log("butin regex", this.butinRegex.exec(report));
 		result.butin = parseInt(this.butinRegex.exec(report)[1], 10);
 
 		const defense = this.defenseRegex.exec(report);
@@ -170,42 +158,6 @@ export class AppComponent implements AfterViewInit {
 		return parseFloat(input) * multiplicator;
 	}
 
-	resetFilter(): void {
-		this.dataSource.data = this.spyReports;
-	}
-
-	clearDefense(): void {
-		this.dataSource.data = this.spyReports.slice().filter((rep: SpyReport) => rep.defenses.amount > 0);
-	}
-
-	clearFleet(): void {
-		this.dataSource.data = this.spyReports.slice().filter((rep: SpyReport) => rep.flottes.amount > 0);
-	}
-
-	clearBoth(): void {
-		this.dataSource.data = this.spyReports
-			.slice()
-			.filter((rep: SpyReport) => rep.flottes.amount === 0 && rep.defenses.amount === 0);
-	}
-
-	navigate(report: SpyReport): void {
-		this.lastElementClicked = report;
-		window.open(this.getLink(report.coordinates, +report.noCargo + 1, "fleetdispatch"), "_blank");
-	}
-
-	getLink(coordinate: Coordinate, cargo: number, component: string): string {
-		return `${this.universUrl}/game/index.php?page=ingame&component=${component}&galaxy=${coordinate.galaxy}&system=${coordinate.system}&position=${coordinate.position}&type=1&mission=1&cargo=${cargo}`;
-	}
-
-	remove(report: SpyReport): void {
-		this.spyReports = this.spyReports.filter((rep: SpyReport) => rep !== report);
-		this.dataSource.data = this.spyReports;
-	}
-
-	browse(report: SpyReport): void {
-		window.open(this.getLink(report.coordinates, report.noCargo, "galaxy"), "_blank");
-	}
-
 	urlIsValid(): boolean {
 		const regex = new RegExp(this.urlRegex);
 
@@ -219,84 +171,20 @@ export class AppComponent implements AfterViewInit {
 
 		return baseCapacity + techBonus + collectorBonus;
 	}
-}
 
-export class SpyReport {
-	public resources: number;
-	public metal: number;
-	public crystal: number;
-	public deuterium: number;
-	public flottes: AttackPower;
-	public defenses: AttackPower;
-	public coordinates: Coordinate;
-	public activity: number;
-	public player: string;
-	public butin: number;
-	public cargoCapacity: number;
+	saveForLater(report: SpyReport): void {
+		let existing: SpyReport = this.savedForLater.find(
+			(item: SpyReport) => item.coordinates.toString() === report.coordinates.toString()
+		);
 
-	public get noCargo(): number {
-		const butin = this.butin / 100;
-		return Math.ceil((this.resources * butin) / this.cargoCapacity);
-	}
+		if (existing) {
+			existing = report;
+		} else {
+			this.savedForLater.push(report);
+		}
 
-	public get smallCargo(): number {
-		return Math.ceil(this.noCargo * 5);
-	}
-
-	constructor(cargoCapacity: number) {
-		this.cargoCapacity = cargoCapacity;
-	}
-
-	setCoordinates(coord: string): void {
-		const group = coord.split(":");
-		const coords = new Coordinate();
-		coords.galaxy = +group[0];
-		coords.system = +group[1];
-		coords.position = +group[2];
-		this.coordinates = coords;
-	}
-
-	getCoordinates(): string {
-		return this.coordinates.toString();
-	}
-
-	isInactif(): boolean {
-		return this.player?.includes("(i)");
-	}
-
-	isStronglyInactif(): boolean {
-		return this.player?.includes("(I)");
-	}
-
-	isHonorable(): boolean {
-		return this.player?.includes("(ph)");
-	}
-}
-
-export class AttackPower {
-	amount: number;
-
-	constructor(amount: number) {
-		this.amount = amount;
-	}
-
-	warning(): boolean {
-		return this.amount > 0;
-	}
-	danger(): boolean {
-		return this.amount > 1000000;
-	}
-	unknown(): boolean {
-		return this.amount == null;
-	}
-}
-
-export class Coordinate {
-	public galaxy: number;
-	public system: number;
-	public position: number;
-
-	toString(): string {
-		return `[${this.galaxy}:${this.system}:${this.position}]`;
+		this.savedGrid.dataSource.data = this.savedForLater;
+		// console.log(JSON.stringify(this.savedForLater));
+		localStorage.setItem(LATER_KEY, JSON.stringify(this.savedForLater));
 	}
 }

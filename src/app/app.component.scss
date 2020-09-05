@@ -71,29 +71,9 @@
 			justify-content: flex-end;
 		}
 
-		table {
-			width: 100%;
-		}
-
 		.animated-content {
 			overflow: hidden;
 		}
-	}
-
-	.coords {
-		cursor: pointer;
-		&:visited,
-		&:link {
-			color: white;
-		}
-		&:hover {
-			text-decoration: underline;
-			color: #34aeeb;
-		}
-	}
-
-	.focused {
-		background: rgba(0, 0, 0, 0.5);
 	}
 }
 
@@ -101,29 +81,4 @@
 	position: absolute;
 	bottom: 24px;
 	right: 24px;
-}
-
-.table-card {
-	padding: 0;
-	.toolbar {
-		padding: 8px;
-	}
-}
-
-.inactif {
-	color: #a5a3a3;
-}
-
-.strong-inactif {
-	color: #757575;
-}
-.unknown,
-.honorable {
-	color: #f4fc03;
-}
-.warn {
-	color: #fcba03;
-}
-.danger {
-	color: #fc0303;
 }
