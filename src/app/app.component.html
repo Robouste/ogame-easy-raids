@@ -71,7 +71,7 @@
 			<mat-icon>add</mat-icon>
 		</button>
 	</mat-card>
-	<mat-tab-group>
+	<mat-tab-group dynamicHeight>
 		<mat-tab label="Results">
 			<mat-card class="table-card">
 				<app-grid
@@ -81,7 +81,7 @@
 					(savedForLater)="saveForLater($event)"
 				></app-grid> </mat-card
 		></mat-tab>
-		<mat-tab label="Saved">
+		<mat-tab label="Saved ({{ savedForLater.length }})">
 			<mat-card class="table-card">
 				<app-grid
 					#savedGrid

@@ -55,13 +55,20 @@ export class GridComponent implements AfterViewInit {
 		this.dataSource.sort = this.sort;
 	}
 
-	navigate(report: SpyReport): void {
+	navigate(report: SpyReport, params?: ILinkParams): void {
 		this.lastElementClicked = report;
-		window.open(this.getLink(report.coordinates, +report.noCargo + 1, "fleetdispatch"), "_blank");
+		window.open(this.getLink(report.coordinates, "fleetdispatch", params), "_blank");
 	}
 
-	getLink(coordinate: Coordinate, cargo: number, component: string): string {
-		return `${this.universUrl}/game/index.php?page=ingame&component=${component}&galaxy=${coordinate.galaxy}&system=${coordinate.system}&position=${coordinate.position}&type=1&mission=1&cargo=${cargo}`;
+	getLink(coordinate: Coordinate, component: string, params?: ILinkParams | ILinkParams[]): string {
+		let link: string = `${this.universUrl}/game/index.php?page=ingame&component=${component}&galaxy=${coordinate.galaxy}&system=${coordinate.system}&position=${coordinate.position}&type=1&mission=1`;
+
+		if (this.isArray(params)) {
+			params.forEach((param: ILinkParams) => (link += `&${param.name}=${param.amount}`));
+		} else {
+			link += `&${params.name}=${params.amount}`;
+		}
+		return link;
 	}
 
 	remove(report: SpyReport): void {
@@ -74,11 +81,20 @@ export class GridComponent implements AfterViewInit {
 	}
 
 	browse(report: SpyReport): void {
-		window.open(this.getLink(report.coordinates, report.noCargo, "galaxy"), "_blank");
+		window.open(this.getLink(report.coordinates, "galaxy"), "_blank");
 	}
 
 	saveForLater(element: SpyReport): void {
 		this.savedForLater.emit(element);
 		this.remove(element);
 	}
+
+	private isArray(param: ILinkParams | ILinkParams[]): param is ILinkParams[] {
+		return Array.isArray(param);
+	}
+}
+
+export interface ILinkParams {
+	name: "am202" | "am203";
+	amount: number;
 }

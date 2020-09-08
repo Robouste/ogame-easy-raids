@@ -26,7 +26,8 @@ table {
 	color: #fc0303;
 }
 
-.coords {
+.coords,
+.cargo-cell span {
 	cursor: pointer;
 	&:visited,
 	&:link {
