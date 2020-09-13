@@ -60,7 +60,7 @@ export class GridComponent implements AfterViewInit {
 		window.open(this.getLink(report.coordinates, "fleetdispatch", params), "_blank");
 	}
 
-	getLink(coordinate: Coordinate, component: string, params?: ILinkParams | ILinkParams[]): string {
+	getLink(coordinate: Coordinate, component: string, params: ILinkParams | ILinkParams[] = []): string {
 		let link: string = `${this.universUrl}/game/index.php?page=ingame&component=${component}&galaxy=${coordinate.galaxy}&system=${coordinate.system}&position=${coordinate.position}&type=1&mission=1`;
 
 		if (this.isArray(params)) {
